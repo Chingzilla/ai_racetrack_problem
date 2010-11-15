@@ -4,8 +4,8 @@ import random
 
 track_key = {'road':     '.',
              'wall':     '#',
-             'start':    's',
-             'finish':   'f',
+             'start':    'S',
+             'finish':   'F',
             }
 
 class track(object):
@@ -17,7 +17,7 @@ class track(object):
 
     def loadtrack(self, track_file):
         '''Builds track from track file'''
-        self.track = [[]]
+        self.track = []
 
         self.finish_list = []
         self.start_list = []
@@ -33,6 +33,8 @@ class track(object):
         for x in range(self.track_dem[0]):
 
             track_line = track_file.readline()
+            self.track.append([])
+
             for y in range(self.track_dem[1]):
                 
                 y_point = track_line[y]
@@ -52,7 +54,7 @@ class track(object):
                 elif y_point == track_key['finish']:
                     self.finish_list.append([x,y])
                 else:
-                    raise IOError('Unknown Charactor: {0}'.format(y_point))
+                    raise IOError('Unknown Charactor: {0} @ {1}'.format(y_point, str([x,y])))
 
     def __str__(self):
         string = ""
