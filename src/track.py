@@ -8,7 +8,7 @@ track_key = {'road':     '.',
              'finish':   'F',
             }
 
-class track(object):
+class Track(object):
     '''
     Stores all track related values
     '''
@@ -65,7 +65,7 @@ class track(object):
 
         return string
 
-class car(object):
+class Car(object):
     '''
     Stores and moves the car
     '''
@@ -75,10 +75,10 @@ class car(object):
         self.speed = [0,0]
         self.path = [[start]]
 
-    def acc(self, change):
+    def acceleration(self, new_acc):
         '''Tries to accelerate the car'''
         if random.random() < .90:
-            changespeed(change)
+            self.changespeed(new_acc)
             return True
         return False
 
@@ -86,7 +86,7 @@ class car(object):
         self.speed[0] += acc[0]
         self.speed[1] += acc[1]
 
-        self.checkspeed(self)
+        self.checkspeed()
 
     def checkspeed(self):
         if self.speed[0] > 5:
