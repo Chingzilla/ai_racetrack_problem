@@ -36,7 +36,7 @@ class TestCar(unittest.TestCase):
         self.car.speed = [0,0]
         acc = [5,5]
         while not self.car.acceleration(acc): pass
-        self.assertEqual(self.car.speed, acc)
+        self.assertEqual(self.car.speed, [1,1])
 
     def test_checkspeed(self):
         '''test checkspeed and changespeed methods'''
@@ -46,7 +46,7 @@ class TestCar(unittest.TestCase):
         self.assertEqual(self.car.speed, [1,1])
 
         self.car.changespeed([10,-10])
-        self.assertEqual(self.car.speed, [5,-5])
+        self.assertEqual(self.car.speed, [2, 0])
 
         
 
