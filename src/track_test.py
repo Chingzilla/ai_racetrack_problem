@@ -7,21 +7,21 @@ import track
 class TestTrack(unittest.TestCase):
     '''This class tests all track methods'''
     def setUp(self):
-        self.track_o = track.Track(open("../data/O-track.txt",'r'))
-        self.track_l = track.Track(open("../data/L-track.txt",'r'))
-        self.track_r = track.Track(open("../data/R-track.txt",'r'))
-        self.track_strait = track.Track(open("../data/strait-track.txt",'r'))
+        self.track_o = track.Track("../data/O-track.txt")
+        self.track_l = track.Track("../data/L-track.txt")
+        self.track_r = track.Track("../data/R-track.txt")
+        self.track_strait = track.Track("../data/strait-track.txt")
 
     def test_toString(self):
-        print self.track_o
-        print self.track_l
-        print self.track_r
-        print self.track_strait
+        print (self.track_o)
+        print (self.track_l)
+        print (self.track_r)
+        print (self.track_strait)
 
 class TestCar(unittest.TestCase):
     '''This class tests all car methods'''
     def setUp(self):
-        simple_track = track.Track(open("../data/strait-track.txt",'r'))
+        simple_track = track.Track("../data/strait-track.txt")
         self.car = track.Car(simple_track,simple_track.start_list[0])
 
     def test_acceleration(self):

@@ -12,8 +12,10 @@ class Track(object):
     '''
     Stores all track related values
     '''
-    def __init__(self, track_file):
+    def __init__(self, file):
+        track_file = open(file, 'r');
         self.loadtrack(track_file)
+        self.file_name = file;
 
     def loadtrack(self, track_file):
         '''Builds track from track file'''
@@ -62,18 +64,33 @@ class Track(object):
             for y in x:
                 string += y
             string += '\n'
-
         return string
 
 class Car(object):
     '''
     Stores and moves the car
     '''
-    def __init__(self,track,start):
+    def __init__(self,track,start,crash=None):
         self.track = track
         self.pos = start
         self.speed = [0,0]
         self.path = [[start]]
+        #Set the crash setup
+        if crash == None:
+            self.crash = self.crashbackup
+
+    def crashbackup(current_path):
+        self.speed = [0,0]
+        temp_pos = current_path[0]
+        for x in current_path:
+            if x in self.track.wall:
+                return temp_pos
+            temp_pos = x
+        print("crashbackup: Error no wall found")
+
+    def crashrestart(current_path):
+        self.speed = [0,0]
+        return self.path[0]
 
     def acceleration(self, new_acc):
         '''Tries to accelerate the car'''
@@ -83,8 +100,10 @@ class Car(object):
         return False
 
     def changespeed(self, acc):
-        self.speed[0] += acc[0]
-        self.speed[1] += acc[1]
+        if acc[0]:
+            self.speed[0] += acc[0]/abs(acc[0])
+        if acc[0]:
+            self.speed[1] += acc[1]/abs(acc[1])
 
         self.checkspeed()
 
@@ -103,10 +122,19 @@ class Car(object):
         '''Triggers on time tick, return the cost'''
         if acc:
             self.acc(acc)
+        new_pos_x = self.speed[0] + self.pos[0]
+        new_pos_y = self.speed[1] + self.pos[1]
+        move([new_pos_x, new_pos_y])
+        return -1
         
     def move(self, pos):
         '''Moves the car to the next location'''
         self.path.append(pos)
+        travel_path = getpaths(self.pos, pos);
+        #check if car crashes
+        for x in travel_path:
+            if x in self.track.wall_list:
+                pos = self.crash(travel_path)
         self.pos = pos
 
     def getpaths(old, new, path=None):
@@ -127,12 +155,16 @@ class Car(object):
         diff_xy = [old[0]-new[0], old[1]-new[1]]
 
         # Call recusivly based on ratio
-        # If ratio = 1 split path(aka diaganal path)
-        if abs(diff_xy[0] / diff_xy[1]) == 1:
+        if abs(diff_xy[0] / diff_xy[1]) >= 1:
             #Move horiz
             new_old = list(old)
             new_old[0] += diff_xy[0] / abs(diff_xy[0])
             return self.getpaths(new_old, new, list(path))
+        else:
+            #Move vertical
+            new_old = list(old)
+            new_old[1] += diff_xy[1] / abs(diff_xy[1])
+            return self.getpaths(new_old, new, list(past))
 
-        # TODO finish path cration logic
-            
+    def __str__(self):
+           return track 
