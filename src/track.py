@@ -1,6 +1,7 @@
 #src/track.py
 
 import random
+from mdp import action_probability
 
 track_key = {'road':     '.',
              'wall':     '#',
@@ -57,6 +58,9 @@ class Track(object):
                     self.finish_list.append([x,y])
                 else:
                     raise IOError('Unknown Charactor: {0} @ {1}'.format(y_point, str([x,y])))
+        
+        #Close file, save resources :)
+        track_file.close()
 
     def __str__(self):
         string = ""
@@ -70,14 +74,19 @@ class Car(object):
     '''
     Stores and moves the car
     '''
-    def __init__(self,track,start,crash=None):
+    def __init__(self,track,start=None,crash=None):
         self.track = track
-        self.pos = start
         self.speed = [0,0]
-        self.path = [[start]]
         #Set the crash setup
         if crash == None:
             self.crash = self.crashbackup
+
+        #Set up start point if not given
+        if start==None:
+            self.start = self.track.start_list[0];
+        else:
+            self.start = start
+        self.path = [[start]]
 
     def crashbackup(current_path):
         self.speed = [0,0]
@@ -94,7 +103,7 @@ class Car(object):
 
     def acceleration(self, new_acc):
         '''Tries to accelerate the car'''
-        if random.random() < .90:
+        if random.random() < action_probability:
             self.changespeed(new_acc)
             return True
         return False
@@ -125,16 +134,29 @@ class Car(object):
         new_pos_x = self.speed[0] + self.pos[0]
         new_pos_y = self.speed[1] + self.pos[1]
         move([new_pos_x, new_pos_y])
-        return -1
+
+        #Check if at finish line
+        if pos in track.finish_list:
+            return 0
+        else:
+            return -1
         
     def move(self, pos):
         '''Moves the car to the next location'''
         self.path.append(pos)
         travel_path = getpaths(self.pos, pos);
+        #check if car passed finish line
+        for temp in travel_path:
+            if temp in self.track.finish_list:
+                self.pos = temp
+                return
+
         #check if car crashes
         for x in travel_path:
             if x in self.track.wall_list:
                 pos = self.crash(travel_path)
+                return
+                
         self.pos = pos
 
     def getpaths(old, new, path=None):
